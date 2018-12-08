@@ -163,6 +163,37 @@ std::vector<int> region_file_reader::get_blocks_at(unsigned int x, unsigned int 
 }
 
 /*
+ * Returns a region's data at a given x, z coord
+ */
+std::vector<int> region_file_reader::get_data_at(unsigned int x, unsigned int z) {
+	std::vector<int> all_blocks;
+	std::vector<char> sect_blocks;
+	std::vector<generic_tag *> section;
+	unsigned int pos = z * region_dim::CHUNK_WIDTH + x;
+
+	// retrieve chunk data
+	section = reg.get_tag_at(pos).get_sub_tag_by_name("Data");
+
+	// return an empty vector if no blocks exists in a given chunk
+	if(section.empty())
+		return all_blocks;
+
+	// iterate through a series of sections combining the blocks
+	for(int i = section.size() - 1; i >= 0; --i) {
+			sect_blocks = static_cast<byte_array_tag *>(section.at(i))->get_value();
+			all_blocks.insert(all_blocks.begin(), sect_blocks.begin(), sect_blocks.end());
+	}
+
+  std::vector<int> all_data;
+  for(int lx = 0;lx < all_blocks.size();lx++) {
+    int v = all_blocks[lx];
+    all_data.push_back(v&((1<<4)-1));
+    all_data.push_back(v>>4);
+  }
+
+	return all_data;
+}
+/*
  * Returns a region's chunk tag at a given x, z coord
  */
 chunk_tag &region_file_reader::get_chunk_tag_at(unsigned int x, unsigned int z) {

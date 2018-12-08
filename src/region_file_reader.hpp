@@ -152,6 +152,11 @@ public:
 	std::vector<int> get_blocks_at(unsigned int x, unsigned int z);
 
 	/*
+	 * Returns a region's blocks at a given x, z coord
+	 */
+	std::vector<int> get_data_at(unsigned int x, unsigned int z);
+
+	/*
 	 * Returns a region's chunk tag at a given x, z coord
 	 */
 	chunk_tag &get_chunk_tag_at(unsigned int x, unsigned int z);
